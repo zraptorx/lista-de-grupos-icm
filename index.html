@@ -7,25 +7,16 @@
   
   <style>
     body{font-family:Arial,Helvetica,sans-serif;margin:20px;background:#fff;color:#111}
-    
-    /* LOGIN */
     #auth-screen{max-width:350px;margin:60px auto;text-align:center;border:1px solid #ddd;padding:30px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
     #app-screen{display:none}
-    
     input.login-input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
-    
-    /* Botões de Login */
     button.login-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #111;background:#f0f0f0;cursor:pointer;margin-top:10px}
-    button.google-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#444;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:bold}
-    button.google-btn:hover{background:#f9f9f9}
+    button.google-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#444;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:bold;width:100%}
     
-    /* G2 ESTILOS */
     h1{font-size:20px;margin:0 0 6px 0}
-    .muted{color:#666;font-size:12px;margin-bottom:10px}
     button,select,input,textarea{padding:10px;font-size:15px;border-radius:8px;border:1px solid #ccc;margin:4px 0;background:#fff}
     button{cursor:pointer}
     button.primary{border-color:#111;background:#f0f0f0}
-    button.danger{border-color:#a33;color:#a33}
     button.success{border-color:#16a34a;color:#16a34a}
     
     .topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fafafa;margin:12px 0}
@@ -34,27 +25,18 @@
     textarea{width:100%;min-height:130px;resize:vertical;box-sizing:border-box}
     .small{font-size:12px;color:#666}
     
-    /* TABELA */
     .tableWrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #ddd;border-radius:12px;background:#fff}
     table{border-collapse:collapse;width:max-content;min-width:100%;margin-top:0}
     th,td{border:1px solid #ddd;padding:6px;text-align:center;white-space:nowrap}
     th{background:#f2f2f2;font-size:11px;position:sticky;top:0;z-index:3}
     
-    td.day{cursor:pointer}
-    td.day:hover{background-color:#f5f5f5}
-
     th.nameHead, td.name {
       position: sticky; left: 0; z-index: 10; background: #fff !important;
       text-align: left; min-width: 260px; max-width: 260px; border-right: 2px solid #ddd;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    th.nameHead { z-index: 11; background: #f2f2f2 !important; }
-    td.name{font-weight:600; display: flex; justify-content: space-between; align-items: center;}
-    
     .sun{background:#fff9e6 !important}
     .present{background:#d1f3dc !important}
-    .btn-del{color: #a33; border: none; background: none; font-weight: bold; cursor: pointer; font-size:16px}
-    
+    .btn-del{color: #a33; border: none; background: none; font-weight: bold; cursor: pointer}
     footer{text-align:center;margin-top:20px;font-size:13px;color:#888}
   </style>
 </head>
@@ -63,25 +45,24 @@
 <div id="auth-screen">
   <h1>🔐 Acesso ICM</h1>
   <p class="small">Entre ou crie uma conta para o seu grupo.</p>
-  
   <input type="email" id="email" class="login-input" placeholder="E-mail">
-  <input type="password" id="pass" class="login-input" placeholder="Senha (mín. 6 dígitos)">
+  <input type="password" id="pass" class="login-input" placeholder="Senha">
   
   <button id="btnLogin" class="login-btn">Entrar com E-mail</button>
   
   <button id="btnGoogle" class="google-btn">
-    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.715H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
     Entrar com Google
   </button>
 
-  <button id="btnReg" style="border:none;text-decoration:underline;background:none;font-size:12px;margin-top:10px;cursor:pointer">Cadastrar com E-mail e Senha</button>
+  <button id="btnReg" style="border:none;text-decoration:underline;background:none;font-size:12px;margin-top:10px">Criar conta com e-mail</button>
   <footer>Criado por Romulo Peredo</footer>
 </div>
 
 <div id="app-screen">
   <div style="display:flex; justify-content:space-between; align-items:center">
     <h1 id="mainTitle">📋 Lista de Presença</h1>
-    <button id="btnLogout" style="font-size:12px; padding:5px 10px">Sair</button>
+    <button id="btnLogout" style="font-size:12px">Sair</button>
   </div>
   
   <div class="box">
@@ -92,31 +73,23 @@
   </div>
 
   <div class="topbar">
-    <div class="field" style="flex:2;min-width:200px">
-        <div class="small">Nome do Grupo (Ex: Jovens)</div>
-        <input id="groupNameInput" type="text" placeholder="Digite o nome do grupo aqui..." style="font-weight:bold; color:#000">
+    <div class="field" style="flex:2">
+        <div class="small">Nome do Grupo</div>
+        <input id="groupNameInput" type="text" placeholder="Ex: Grupo de Louvor" style="font-weight:bold">
     </div>
-
     <div class="field"><div class="small">Mês</div><select id="month"></select></div>
     <div class="field"><div class="small">Ano</div><select id="year"></select></div>
     <div class="field"><div class="small">Dia</div><select id="daySelect"></select></div>
-    <div class="field" style="flex:1;min-width:150px"><div class="small">Buscar</div><input id="search" type="text" placeholder="Filtrar..."></div>
-    
     <div class="field"><button id="btnPdf" class="primary">PDF</button></div>
-    <div class="field"><button id="btnBackup" class="success">⬇️ Backup</button></div>
-    <div class="field"><button id="btnRestore" class="success">⬆️ Restore</button></div>
-    <input type="file" id="fileRestore" style="display:none" accept=".json">
   </div>
 
   <div class="tableWrap"><table id="table"></table></div>
 
   <div class="box">
-    <button id="btnGenerate" class="primary">Gerar Relatório Diário</button>
+    <button id="btnGenerate" class="primary">Gerar Texto</button>
     <button id="btnSendWa" class="success">📱 Enviar WhatsApp</button>
-    <textarea id="waText" readonly placeholder="O texto aparecerá aqui..."></textarea>
+    <textarea id="waText" readonly></textarea>
   </div>
-
-  <footer>Criado por Romulo Peredo</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -136,57 +109,49 @@
     appId: "1:676914873766:web:25f4aea0809e1f4308fb67"
   };
 
+  // Inicialização Segura
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  let people = [], marks = {}, groupConfig = { name: "Lista de Presença" };
-  let currentDocRef, peopleDocRef, configDocRef, unsubP, unsubM, unsubC, userUID;
+  let people = [], marks = {}, groupConfig = { name: "" };
+  let currentDocRef, peopleDocRef, configDocRef, userUID;
 
-  const monthSel = document.getElementById("month"), 
-        yearSel = document.getElementById("year"), 
-        daySel = document.getElementById("daySelect"), 
-        table = document.getElementById("table"), 
-        searchEl = document.getElementById("search"), 
-        waText = document.getElementById("waText"),
-        groupNameInput = document.getElementById("groupNameInput"),
-        mainTitle = document.getElementById("mainTitle");
-        
-  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  // --- LOGICA DE LOGIN CORRIGIDA ---
 
-  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
-  monthSel.value = new Date().getMonth();
-  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
-  yearSel.value = new Date().getFullYear();
+  // Login Email
+  document.getElementById("btnLogin").addEventListener("click", async () => {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('pass').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) { alert("Erro ao entrar: " + e.message); }
+  });
 
-  // --- LOGIN: EMAIL/SENHA ---
-  const emailIn = document.getElementById('email');
-  const passIn = document.getElementById('pass');
+  // Cadastro Email
+  document.getElementById("btnReg").addEventListener("click", async () => {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('pass').value;
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+      alert("Conta criada!");
+    } catch (e) { alert("Erro ao criar: " + e.message); }
+  });
 
-  document.getElementById("btnReg").onclick = async () => {
-    if (!emailIn.value || passIn.value.length < 6) return alert("E-mail e senha (6+ dígitos) obrigatórios.");
-    try { await createUserWithEmailAndPassword(auth, emailIn.value, passIn.value); alert("Conta Criada! Entrando..."); }
-    catch (e) { alert("Erro: " + e.message); }
-  };
-
-  document.getElementById("btnLogin").onclick = async () => {
-    try { await signInWithEmailAndPassword(auth, emailIn.value, passIn.value); } 
-    catch (e) { alert("Erro ao entrar. Verifique dados."); }
-  };
-
-  // --- LOGIN: GOOGLE ---
-  document.getElementById("btnGoogle").onclick = async () => {
+  // Login Google
+  document.getElementById("btnGoogle").addEventListener("click", async () => {
     const provider = new GoogleAuthProvider();
     try {
-        await signInWithPopup(auth, provider);
-        // O onAuthStateChanged vai cuidar do resto
+      await signInWithPopup(auth, provider);
     } catch (e) {
-        alert("Erro no Login Google: " + e.message);
+      console.error(e);
+      alert("Erro Google: " + e.code);
     }
-  };
+  });
 
   document.getElementById("btnLogout").onclick = () => signOut(auth);
 
+  // Monitor de Estado
   onAuthStateChanged(auth, (user) => {
     if (user) {
       userUID = user.uid;
@@ -196,37 +161,28 @@
     } else {
       document.getElementById("auth-screen").style.display = "block";
       document.getElementById("app-screen").style.display = "none";
-      if(unsubP) unsubP(); if(unsubM) unsubM(); if(unsubC) unsubC();
     }
   });
 
-  // --- SISTEMA ---
+  // --- SISTEMA G2 (REMANESCENTE) ---
+
+  const monthSel = document.getElementById("month"), yearSel = document.getElementById("year"), daySel = document.getElementById("daySelect"), table = document.getElementById("table"), waText = document.getElementById("waText"), groupNameInput = document.getElementById("groupNameInput"), mainTitle = document.getElementById("mainTitle");
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
+  monthSel.value = new Date().getMonth();
+  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
+  yearSel.value = new Date().getFullYear();
 
   async function attachListeners(){
     const y = yearSel.value, m = Number(monthSel.value), mKey = `${y}-${String(m+1).padStart(2,"0")}`;
-    
-    // Referências
     peopleDocRef = doc(db, `usuarios/${userUID}/dados`, "membros");
-    configDocRef = doc(db, `usuarios/${userUID}/dados`, "config"); // Novo local para o nome do grupo
+    configDocRef = doc(db, `usuarios/${userUID}/dados`, "config");
     currentDocRef = doc(db, `usuarios/${userUID}/presencas`, mKey);
 
-    // 1. Ouvir Membros
-    if(unsubP) unsubP();
-    unsubP = onSnapshot(peopleDocRef, snap => { 
-        people = snap.exists() ? snap.data().people || [] : []; 
-        render(); 
-    });
-
-    // 2. Ouvir Presenças
-    if(unsubM) unsubM();
-    unsubM = onSnapshot(currentDocRef, snap => { 
-        marks = snap.exists() ? snap.data().marks || {} : {}; 
-        render(); 
-    });
-
-    // 3. Ouvir Configuração (Nome do Grupo)
-    if(unsubC) unsubC();
-    unsubC = onSnapshot(configDocRef, snap => {
+    onSnapshot(peopleDocRef, snap => { people = snap.exists() ? snap.data().people || [] : []; render(); });
+    onSnapshot(currentDocRef, snap => { marks = snap.exists() ? snap.data().marks || {} : {}; render(); });
+    onSnapshot(configDocRef, snap => {
         if(snap.exists()) {
             groupConfig = snap.data();
             groupNameInput.value = groupConfig.name || "";
@@ -239,18 +195,12 @@
     for(let i=1; i<=days; i++) daySel.add(new Option(i,i));
   }
 
-  // SALVAR NOME DO GRUPO AO MUDAR
   groupNameInput.onchange = async () => {
-      const newName = groupNameInput.value.trim();
-      if(newName) {
-          await setDoc(configDocRef, { name: newName }, { merge: true });
-      }
+    await setDoc(configDocRef, { name: groupNameInput.value }, { merge: true });
   };
 
   function render(){
     const y = Number(yearSel.value), m = Number(monthSel.value), days = new Date(y, m+1, 0).getDate();
-    const q = (searchEl.value || "").toLowerCase();
-    
     let h1 = "<tr><th rowspan='2' class='nameHead'>Nome</th>", h2 = "<tr>";
     for(let d=1; d<=days; d++){
       const isSun = new Date(y, m, d).getDay() === 0;
@@ -260,7 +210,7 @@
     h1 += "</tr>"; h2 += "</tr>";
     
     let body = "";
-    people.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
+    people.forEach(p => {
       body += `<tr><td class="name"><span>${p.name}</span> <button class="btn-del" onclick="delM('${p.id}')">✕</button></td>`;
       for(let d=1; d<=days; d++) {
         const isSun = new Date(y, m, d).getDay() === 0;
@@ -281,18 +231,11 @@
   window.toggle = async (pid, d, type) => {
     const id = `${pid}-${d}-${type}`;
     const val = marks[id] ? deleteField() : true;
-    const dotPath = `marks.${id}`;
-    try {
-      await updateDoc(currentDocRef, { [dotPath]: val });
-    } catch (e) {
-      if (e.code === 'not-found') await setDoc(currentDocRef, { marks: { [id]: true } });
-      else alert("Erro: " + e.message);
-    }
+    try { await updateDoc(currentDocRef, { [`marks.${id}`]: val }); } 
+    catch (e) { if (e.code === 'not-found') await setDoc(currentDocRef, { marks: { [id]: true } }); }
   };
 
-  window.delM = async (id) => { 
-    if(confirm("Remover este membro?")) await setDoc(peopleDocRef, { people: people.filter(p => p.id !== id) }); 
-  };
+  window.delM = async (id) => { if(confirm("Remover?")) await setDoc(peopleDocRef, { people: people.filter(p => p.id !== id) }); };
 
   document.getElementById("btnAdd").onclick = async () => {
     const n = document.getElementById("newName").value.trim().toUpperCase();
@@ -301,8 +244,14 @@
   };
 
   monthSel.onchange = yearSel.onchange = attachListeners;
-  searchEl.oninput = render;
 
-  // --- RELATÓRIOS USANDO O NOME DO GRUPO ---
+  document.getElementById("btnGenerate").onclick = () => {
+    const d = daySel.value;
+    const pC = people.filter(p => marks[`${p.id}-${d}-C`]).map(p => p.name);
+    waText.value = `📋 *${groupConfig.name || "Grupo"}* (${d}/${Number(monthSel.value)+1})\nPresenças: ${pC.length}\n${pC.join("\n")}`;
+  };
 
-  document.getElementById
+  document.getElementById("btnSendWa").onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(waText.value)}`, '_blank');
+</script>
+</body>
+</html>
