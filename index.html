@@ -3,20 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lista de Grupos ICM</title>
+  <title>Sistema Multi-Grupos ICM</title>
+  
   <style>
-    body{font-family:Arial,sans-serif;margin:20px;background:#fff;color:#111}
+    body{font-family:Arial,Helvetica,sans-serif;margin:20px;background:#fff;color:#111}
+    
+    /* LOGIN */
     #auth-screen{max-width:350px;margin:60px auto;text-align:center;border:1px solid #ddd;padding:30px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
     #app-screen{display:none}
-    input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
-    button{width:100%;padding:10px;border-radius:8px;border:1px solid #111;background:#f0f0f0;cursor:pointer;margin-top:10px}
+    
+    input.login-input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+    button.login-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #111;background:#f0f0f0;cursor:pointer;margin-top:10px}
+    
+    /* G2 ESTILOS */
+    h1{font-size:20px;margin:0 0 6px 0}
+    .muted{color:#666;font-size:12px;margin-bottom:10px}
+    button,select,input,textarea{padding:10px;font-size:15px;border-radius:8px;border:1px solid #ccc;margin:4px 0;background:#fff}
+    button{cursor:pointer}
+    button.primary{border-color:#111;background:#f0f0f0}
+    button.danger{border-color:#a33;color:#a33}
+    button.success{border-color:#16a34a;color:#16a34a}
+    
+    .topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fafafa;margin:12px 0}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .box{border:1px solid #ddd;border-radius:12px;padding:12px;background:#fff;margin-top:12px}
+    textarea{width:100%;min-height:130px;resize:vertical;box-sizing:border-box}
     .small{font-size:12px;color:#666}
+    
+    /* TABELA */
+    .tableWrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #ddd;border-radius:12px;background:#fff}
+    table{border-collapse:collapse;width:max-content;min-width:100%;margin-top:0}
+    th,td{border:1px solid #ddd;padding:6px;text-align:center;white-space:nowrap}
+    th{background:#f2f2f2;font-size:11px;position:sticky;top:0;z-index:3}
+    
+    /* CURSOR NA CÉLULA PARA INDICAR CLIQUE */
+    td.day{cursor:pointer}
+    td.day:hover{background-color:#f5f5f5}
+
+    th.nameHead, td.name {
+      position: sticky; left: 0; z-index: 10; background: #fff !important;
+      text-align: left; min-width: 260px; max-width: 260px; border-right: 2px solid #ddd;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    th.nameHead { z-index: 11; background: #f2f2f2 !important; }
+    td.name{font-weight:600; display: flex; justify-content: space-between; align-items: center;}
+    
+    .sun{background:#fff9e6 !important}
+    .present{background:#d1f3dc !important}
+    .btn-del{color: #a33; border: none; background: none; font-weight: bold; cursor: pointer; font-size:16px}
+    
     footer{text-align:center;margin-top:20px;font-size:13px;color:#888}
-    /* Estilos da Tabela */
-    .tableWrap{width:100%;overflow-x:auto;margin-top:20px}
-    table{border-collapse:collapse;width:max-content;min-width:100%}
-    th,td{border:1px solid #ddd;padding:8px;text-align:center}
-    .nameCol{position:sticky;left:0;background:#fff;font-weight:bold;min-width:200px;text-align:left;border-right:2px solid #ddd}
   </style>
 </head>
 <body>
@@ -24,34 +60,56 @@
 <div id="auth-screen">
   <h1>🔐 Acesso ICM</h1>
   <p class="small">Entre ou crie uma conta para o seu grupo.</p>
-  <input type="email" id="email" placeholder="E-mail">
-  <input type="password" id="pass" placeholder="Senha (mín. 6 dígitos)">
-  <button id="btnLogin">Entrar</button>
-  <button id="btnReg" style="border:none;text-decoration:underline;background:none">Não tenho conta, quero cadastrar</button>
+  <input type="email" id="email" class="login-input" placeholder="E-mail">
+  <input type="password" id="pass" class="login-input" placeholder="Senha (mín. 6 dígitos)">
+  <button id="btnLogin" class="login-btn">Entrar</button>
+  <button id="btnReg" style="border:none;text-decoration:underline;background:none;font-size:12px;margin-top:10px;cursor:pointer">Cadastrar nova conta</button>
   <footer>Criado por Romulo Peredo</footer>
 </div>
 
 <div id="app-screen">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <h2>📋 Minha Lista</h2>
-    <button id="btnLogout" style="width:auto">Sair</button>
+  <div style="display:flex; justify-content:space-between; align-items:center">
+    <h1>📋 Lista de Presença</h1>
+    <button id="btnLogout" style="font-size:12px; padding:5px 10px">Sair</button>
   </div>
   
-  <div style="margin:20px 0;display:flex;gap:10px">
-    <input type="text" id="newName" placeholder="Nome do membro" style="flex:1">
-    <button id="btnAdd" style="width:auto;margin:0">Adicionar</button>
+  <div class="box">
+    <div style="display:flex; gap:10px">
+      <input type="text" id="newName" placeholder="NOME DO NOVO MEMBRO" style="flex:1">
+      <button id="btnAdd" class="primary">Adicionar</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="field"><div class="small">Mês</div><select id="month"></select></div>
+    <div class="field"><div class="small">Ano</div><select id="year"></select></div>
+    <div class="field"><div class="small">Dia (WhatsApp)</div><select id="daySelect"></select></div>
+    <div class="field" style="flex:1;min-width:200px"><div class="small">Buscar</div><input id="search" type="text" placeholder="Filtrar por nome..."></div>
+    <div class="field"><button id="btnPdf" class="primary">PDF Mensal</button></div>
+    <div class="field"><button id="btnBackup" class="success">⬇️ Backup</button></div>
+    <div class="field"><button id="btnRestore" class="success">⬆️ Restaurar</button></div>
+    <input type="file" id="fileRestore" style="display:none" accept=".json">
   </div>
 
   <div class="tableWrap"><table id="table"></table></div>
+
+  <div class="box">
+    <button id="btnGenerate" class="primary">Gerar Texto</button>
+    <button id="btnSendWa" class="success">📱 Enviar WhatsApp</button>
+    <textarea id="waText" readonly placeholder="O texto aparecerá aqui..."></textarea>
+  </div>
+
   <footer>Criado por Romulo Peredo</footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import { getFirestore, doc, setDoc, onSnapshot, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  // Suas configurações extraídas da imagem
   const firebaseConfig = {
     apiKey: "AIzaSyBBBkKZcscH0aHZBO0_5ydXpkh4lez9Enc",
     authDomain: "lista-de-grupos-icm.firebaseapp.com",
@@ -65,64 +123,195 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  let people = [], marks = {}, currentDocRef, peopleDocRef, unsubP, unsubM, userUID;
+
+  const monthSel = document.getElementById("month"), 
+        yearSel = document.getElementById("year"), 
+        daySel = document.getElementById("daySelect"), 
+        table = document.getElementById("table"), 
+        searchEl = document.getElementById("search"), 
+        waText = document.getElementById("waText");
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
+  monthSel.value = new Date().getMonth();
+  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
+  yearSel.value = new Date().getFullYear();
+
+  // --- LOGIN ---
   const emailIn = document.getElementById('email');
   const passIn = document.getElementById('pass');
 
-  // CADASTRO COM ALERTA DE ERRO REAL
   document.getElementById("btnReg").onclick = async () => {
-    if (!emailIn.value || passIn.value.length < 6) return alert("E-mail válido e senha de 6 dígitos são obrigatórios!");
-    
-    try {
-      await createUserWithEmailAndPassword(auth, emailIn.value, passIn.value);
-      alert("Conta criada com sucesso!");
-    } catch (error) {
-      alert("ERRO NO FIREBASE: " + error.code); // Isso vai dizer se é domínio bloqueado ou chave errada
-      console.error(error);
-    }
+    if (!emailIn.value || passIn.value.length < 6) return alert("E-mail e senha (6+ dígitos) obrigatórios.");
+    try { await createUserWithEmailAndPassword(auth, emailIn.value, passIn.value); alert("Conta Criada! Entrando..."); }
+    catch (e) { alert("Erro: " + e.message); }
   };
 
-  // LOGIN
   document.getElementById("btnLogin").onclick = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, emailIn.value, passIn.value);
-    } catch (error) {
-      alert("Erro ao entrar: Verifique e-mail e senha.");
-    }
+    try { await signInWithEmailAndPassword(auth, emailIn.value, passIn.value); } 
+    catch (e) { alert("Erro ao entrar. Verifique dados."); }
   };
 
-  // LOGOUT
   document.getElementById("btnLogout").onclick = () => signOut(auth);
 
-  // MONITOR DE USUÁRIO
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      userUID = user.uid;
       document.getElementById("auth-screen").style.display = "none";
       document.getElementById("app-screen").style.display = "block";
-      carregarDados(user.uid);
+      attachListeners();
     } else {
       document.getElementById("auth-screen").style.display = "block";
       document.getElementById("app-screen").style.display = "none";
+      if(unsubP) unsubP(); if(unsubM) unsubM();
     }
   });
 
-  async function carregarDados(uid) {
-    const docRef = doc(db, `usuarios/${uid}/dados`, "membros");
-    onSnapshot(docRef, (snap) => {
-      const lista = snap.exists() ? snap.data().people || [] : [];
-      const tabela = document.getElementById("table");
-      tabela.innerHTML = "<tr><th class='nameCol'>Nome</th></tr>" + 
-        lista.map(p => `<tr><td class='nameCol'>${p.name}</td></tr>`).join("");
+  // --- SISTEMA ---
+
+  async function attachListeners(){
+    const y = yearSel.value, m = Number(monthSel.value), mKey = `${y}-${String(m+1).padStart(2,"0")}`;
+    
+    peopleDocRef = doc(db, `usuarios/${userUID}/dados`, "membros");
+    currentDocRef = doc(db, `usuarios/${userUID}/presencas`, mKey);
+
+    if(unsubP) unsubP();
+    unsubP = onSnapshot(peopleDocRef, snap => { 
+        people = snap.exists() ? snap.data().people || [] : []; 
+        render(); 
     });
+
+    if(unsubM) unsubM();
+    unsubM = onSnapshot(currentDocRef, snap => { 
+        marks = snap.exists() ? snap.data().marks || {} : {}; 
+        render(); 
+    });
+
+    const days = new Date(y, m+1, 0).getDate();
+    daySel.innerHTML = "";
+    for(let i=1; i<=days; i++) daySel.add(new Option(i,i));
   }
 
+  function render(){
+    const y = Number(yearSel.value), m = Number(monthSel.value), days = new Date(y, m+1, 0).getDate();
+    const q = (searchEl.value || "").toLowerCase();
+    
+    let h1 = "<tr><th rowspan='2' class='nameHead'>Nome</th>", h2 = "<tr>";
+    for(let d=1; d<=days; d++){
+      const isSun = new Date(y, m, d).getDay() === 0;
+      if(isSun){ h1 += `<th colspan='2' class='sun'>${d}</th>`; h2 += `<th class='sun'>E</th><th class='sun'>C</th>`; }
+      else { h1 += `<th rowspan='2'>${d}</th>`; }
+    }
+    h1 += "</tr>"; h2 += "</tr>";
+    
+    let body = "";
+    people.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
+      body += `<tr><td class="name"><span>${p.name}</span> <button class="btn-del" onclick="delM('${p.id}')">✕</button></td>`;
+      for(let d=1; d<=days; d++) {
+        const isSun = new Date(y, m, d).getDay() === 0;
+        if(isSun){
+          const kE = `${p.id}-${d}-E`, kC = `${p.id}-${d}-C`;
+          body += `<td class="day sun ${marks[kE]?'present':''}" onclick="toggle('${p.id}',${d},'E')">${marks[kE]?'X':''}</td>`;
+          body += `<td class="day sun ${marks[kC]?'present':''}" onclick="toggle('${p.id}',${d},'C')">${marks[kC]?'X':''}</td>`;
+        } else {
+          const k = `${p.id}-${d}-C`;
+          body += `<td class="day ${marks[k]?'present':''}" onclick="toggle('${p.id}',${d},'C')">${marks[k]?'X':''}</td>`;
+        }
+      }
+      body += `</tr>`;
+    });
+    table.innerHTML = h1 + h2 + body;
+  }
+
+  // --- CORREÇÃO AQUI: FUNÇÃO TOGGLE ROBUSTA ---
+  window.toggle = async (pid, d, type) => {
+    const id = `${pid}-${d}-${type}`;
+    // Se já estiver marcado, queremos deletar. Se não, queremos marcar true.
+    const val = marks[id] ? deleteField() : true;
+    const dotPath = `marks.${id}`;
+
+    try {
+      // Tenta atualizar. Se o mês já existir, funciona rápido.
+      await updateDoc(currentDocRef, { [dotPath]: val });
+    } catch (e) {
+      // Se der erro porque o documento não existe (primeira vez no mês), cria ele
+      if (e.code === 'not-found') {
+        await setDoc(currentDocRef, { marks: { [id]: true } });
+      } else {
+        console.error(e);
+        alert("Erro ao salvar: " + e.message);
+      }
+    }
+  };
+
+  window.delM = async (id) => { 
+    if(confirm("Remover este membro?")) await setDoc(peopleDocRef, { people: people.filter(p => p.id !== id) }); 
+  };
+
   document.getElementById("btnAdd").onclick = async () => {
-    const nome = document.getElementById("newName").value.toUpperCase();
-    if(!nome) return;
-    const uid = auth.currentUser.uid;
-    const docRef = doc(db, `usuarios/${uid}/dados`, "membros");
-    // Lógica simplificada para teste
-    await setDoc(docRef, { people: [{id: Date.now(), name: nome}] }, {merge: true});
+    const n = document.getElementById("newName").value.trim().toUpperCase();
+    if(n) await setDoc(peopleDocRef, { people: [...people, {id: "p"+Date.now(), name: n}].sort((a,b)=>a.name.localeCompare(b.name)) }, {merge: true});
     document.getElementById("newName").value = "";
+  };
+
+  monthSel.onchange = yearSel.onchange = attachListeners;
+  searchEl.oninput = render;
+
+  // FERRAMENTAS
+  document.getElementById("btnGenerate").onclick = () => {
+    const d = daySel.value, isSun = new Date(yearSel.value, monthSel.value, d).getDay() === 0;
+    const pE = people.filter(p => marks[`${p.id}-${d}-E`]).map(p => p.name).sort();
+    const pC = people.filter(p => marks[`${p.id}-${d}-C`]).map(p => p.name).sort();
+    waText.value = `📋 Presença ICM (${d}/${Number(monthSel.value)+1})\n` + (isSun ? `EBD: ${pE.length}\n${pE.join("\n")}\n\nCULTO: ${pC.length}\n${pC.join("\n")}` : `Total: ${pC.length}\n${pC.join("\n")}`);
+  };
+
+  document.getElementById("btnSendWa").onclick = () => {
+    if(!waText.value) return alert("Gere o texto primeiro!");
+    window.open(`https://wa.me/?text=${encodeURIComponent(waText.value)}`, '_blank');
+  };
+
+  document.getElementById("btnPdf").onclick = () => {
+    const { jsPDF } = window.jspdf;
+    const docPdf = new jsPDF('l', 'mm', 'a4');
+    const y = Number(yearSel.value), m = Number(monthSel.value), days = new Date(y, m+1, 0).getDate();
+    docPdf.text(`Relatório: ${months[m]}/${y}`, 14, 15);
+    
+    let head1 = ['#', 'Nome'], head2 = ['', ''];
+    for(let d=1; d<=days; d++){
+      const isSun = new Date(y, m, d).getDay() === 0;
+      if(isSun){ head1.push(d, ''); head2.push('E', 'C'); } else { head1.push(d); head2.push(''); }
+    }
+    const rows = people.map((p, i) => {
+      let r = [i + 1, p.name];
+      for(let d=1; d<=days; d++) {
+        const isSun = new Date(y, m, d).getDay() === 0;
+        if(isSun) { r.push(marks[`${p.id}-${d}-E`]?"X":"", marks[`${p.id}-${d}-C`]?"X":""); }
+        else { r.push(marks[`${p.id}-${d}-C`]?"X":""); }
+      }
+      return r;
+    });
+    docPdf.autoTable({ head: [head1, head2], body: rows, startY: 20, styles: { fontSize: 6 }, theme: 'grid' });
+    docPdf.save(`Relatorio_${months[m]}.pdf`);
+  };
+
+  document.getElementById("btnBackup").onclick = () => {
+    const b = new Blob([JSON.stringify({people, marks})], {type: "application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "backup_presenca.json"; a.click();
+  };
+
+  document.getElementById("btnRestore").onclick = () => document.getElementById("fileRestore").click();
+  document.getElementById("fileRestore").onchange = (e) => {
+    const r = new FileReader(); r.onload = async (ev) => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if(!d.people || !d.marks) throw new Error("Arquivo inválido");
+        await setDoc(peopleDocRef, { people: d.people }, { merge: true });
+        await setDoc(currentDocRef, { marks: d.marks }, { merge: true });
+        alert("Dados restaurados com sucesso!");
+      } catch(err) { alert("Erro ao restaurar: " + err.message); }
+    }; 
+    r.readAsText(e.target.files[0]);
   };
 </script>
 </body>
