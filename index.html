@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Presença ICM - Lista Inteligente</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:20px;background:#fff;color:#111}
+    h1{font-size:20px;margin:0 0 6px 0}
+    button,select,input,textarea{padding:10px;font-size:15px;border-radius:8px;border:1px solid #ccc;margin:4px 0;background:#fff}
+    button{cursor:pointer}
+    button.primary{border-color:#111;background:#f0f0f0}
+    button.success{border-color:#16a34a;color:#16a34a}
+    button.danger{border-color:#a33;color:#a33}
+    
+    /* Telas */
+    #auth-screen { max-width: 350px; margin: 60px auto; text-align: center; border: 1px solid #ddd; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    #app-screen { display: none; }
+    
+    .topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fafafa;margin:12px 0}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .box{border:1px solid #ddd;border-radius:12px;padding:12px;background:#fff;margin-top:12px}
+    textarea{width:100%;min-height:100px;resize:vertical; box-sizing: border-box;}
+    .small{font-size:12px;color:#666}
+
+    /* Tabela Fixa */
+    .tableWrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #ddd;border-radius:12px;background:#fff}
+    table{border-collapse:collapse;width:max-content;min-width:100%}
+    th,td{border:1px solid #ddd;padding:6px;text-align:center;white-space:nowrap}
+    th{background:#f2f2f2;font-size:11px;position:sticky;top:0;z-index:3}
+    
+    th.nameHead, td.name {
+      position: sticky; left: 0; z-index: 10; background: #fff !important;
+      text-align: left; min-width: 250px; max-width: 250px; border-right: 2px solid #ddd;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    th.nameHead { z-index: 11; background: #f2f2f2 !important; }
+    td.name{font-weight:600; display: flex; justify-content: space-between; align-items: center;}
+    
+    .sun{background:#fff9e6 !important}
+    .present{background:#d1f3dc !important}
+    .btn-del{color: #a33; border: none; background: none; font-weight: bold; cursor: pointer; font-size: 16px;}
+    
+    footer { text-align: center; margin-top: 40px; font-size: 13px; color: #888; padding: 20px; }
+  </style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <h1>🔐 Acesso ICM</h1>
+  <p class="small">Entre ou crie uma conta para o seu grupo.</p>
+  <input type="email" id="email" placeholder="E-mail" style="width:100%; box-sizing:border-box"><br>
+  <input type="password" id="pass" placeholder="Senha" style="width:100%; box-sizing:border-box"><br>
+  <button id="btnLogin" class="primary" style="width:100%">Entrar</button>
+  <button id="btnReg" style="border:none; background:none; text-decoration:underline; font-size:12px; margin-top:10px">Não tenho conta, quero cadastrar</button>
+  
+  <footer style="margin-top:20px; padding:0">Criado por Romulo Peredo</footer>
+</div>
+
+<div id="app-screen">
+  <div style="display:flex; justify-content:space-between; align-items:center">
+    <h1>📋 Minha Lista de Presença</h1>
+    <button id="btnLogout" style="font-size:12px; border:none; background:#eee">Sair</button>
+  </div>
+
+  <div class="box">
+    <div style="display:flex; gap:10px">
+      <input type="text" id="newName" placeholder="NOME DO NOVO MEMBRO" style="flex:1">
+      <button id="btnAdd" class="primary">Adicionar</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="field"><div class="small">Mês</div><select id="month"></select></div>
+    <div class="field"><div class="small">Ano</div><select id="year"></select></div>
+    <div class="field"><div class="small">Dia (WhatsApp)</div><select id="daySelect"></select></div>
+    <div class="field" style="flex:1"><input id="search" type="text" placeholder="Filtrar nome..."></div>
+    <div class="field"><button id="btnPdf" class="primary">Gerar PDF Mensal</button></div>
+  </div>
+
+  <div class="tableWrap"><table id="table"></table></div>
+
+  <div class="box">
+    <button id="btnGenerate" class="primary">Gerar Texto Diário</button>
+    <button id="btnSendWa" class="success">📱 Enviar WhatsApp</button>
+    <textarea id="waText" readonly placeholder="O relatório aparecerá aqui..."></textarea>
+  </div>
+
+  <footer>Criado por Romulo Peredo</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBBkKZcscH0aHZBO0_5ydXpkh4lez9Enc",
+    authDomain: "lista-de-grupos-icm.firebaseapp.com",
+    projectId: "lista-de-grupos-icm",
+    storageBucket: "lista-de-grupos-icm.firebasestorage.app",
+    messagingSenderId: "676914873766",
+    appId: "1:676914873766:web:25f4aea0809e1f4308fb67"
+  };
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, setDoc, onSnapshot, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let people = [], marks = {}, currentDocRef, peopleDocRef, unsubP, unsubM, userUID;
+
+  const monthSel = document.getElementById("month"), yearSel = document.getElementById("year"), daySel = document.getElementById("daySelect"), table = document.getElementById("table"), searchEl = document.getElementById("search"), waText = document.getElementById("waText");
+
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
+  monthSel.value = new Date().getMonth();
+  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
+  yearSel.value = new Date().getFullYear();
+
+  // LOGIN E CADASTRO
+  document.getElementById("btnLogin").onclick = () => {
+    signInWithEmailAndPassword(auth, email.value, pass.value).catch(e => alert("Erro ao entrar: " + e.message));
+  };
+  document.getElementById("btnReg").onclick = () => {
+    createUserWithEmailAndPassword(auth, email.value, pass.value).then(() => alert("Conta criada com sucesso!")).catch(e => alert("Erro ao cadastrar: " + e.message));
+  };
+  document.getElementById("btnLogout").onclick = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      userUID = user.uid;
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("app-screen").style.display = "block";
+      attachListeners();
+    } else {
+      document.getElementById("auth-screen").style.display = "block";
+      document.getElementById("app-screen").style.display = "none";
+    }
+  });
+
+  async function attachListeners(){
+    const y = yearSel.value, m = Number(monthSel.value), mKey = `${y}-${String(m+1).padStart(2,"0")}`;
+    peopleDocRef = doc(db, `usuarios/${userUID}/dados`, "membros");
+    currentDocRef = doc(db, `usuarios/${userUID}/
