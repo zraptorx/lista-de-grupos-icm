@@ -80,7 +80,11 @@
     <div class="field"><div class="small">Mês</div><select id="month"></select></div>
     <div class="field"><div class="small">Ano</div><select id="year"></select></div>
     <div class="field"><div class="small">Dia</div><select id="daySelect"></select></div>
+    
     <div class="field"><button id="btnPdf" class="primary">PDF</button></div>
+    <div class="field"><button id="btnBackup" class="success">⬇️ Backup</button></div>
+    <div class="field"><button id="btnRestore" class="success">⬆️ Restore</button></div>
+    <input type="file" id="fileRestore" style="display:none" accept=".json">
   </div>
 
   <div class="tableWrap"><table id="table"></table></div>
@@ -109,7 +113,6 @@
     appId: "1:676914873766:web:25f4aea0809e1f4308fb67"
   };
 
-  // Inicialização Segura
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
@@ -117,41 +120,31 @@
   let people = [], marks = {}, groupConfig = { name: "" };
   let currentDocRef, peopleDocRef, configDocRef, userUID;
 
-  // --- LOGICA DE LOGIN CORRIGIDA ---
+  const monthSel = document.getElementById("month"), yearSel = document.getElementById("year"), daySel = document.getElementById("daySelect"), table = document.getElementById("table"), waText = document.getElementById("waText"), groupNameInput = document.getElementById("groupNameInput"), mainTitle = document.getElementById("mainTitle");
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-  // Login Email
-  document.getElementById("btnLogin").addEventListener("click", async () => {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('pass').value;
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) { alert("Erro ao entrar: " + e.message); }
-  });
+  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
+  monthSel.value = new Date().getMonth();
+  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
+  yearSel.value = new Date().getFullYear();
 
-  // Cadastro Email
-  document.getElementById("btnReg").addEventListener("click", async () => {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('pass').value;
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-      alert("Conta criada!");
-    } catch (e) { alert("Erro ao criar: " + e.message); }
-  });
+  document.getElementById("btnLogin").onclick = async () => {
+    try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value); } 
+    catch (e) { alert("Erro ao entrar"); }
+  };
 
-  // Login Google
-  document.getElementById("btnGoogle").addEventListener("click", async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      console.error(e);
-      alert("Erro Google: " + e.code);
-    }
-  });
+  document.getElementById("btnGoogle").onclick = async () => {
+    try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
+    catch (e) { alert("Erro Google"); }
+  };
+
+  document.getElementById("btnReg").onclick = async () => {
+    try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value); }
+    catch (e) { alert("Erro ao criar"); }
+  };
 
   document.getElementById("btnLogout").onclick = () => signOut(auth);
 
-  // Monitor de Estado
   onAuthStateChanged(auth, (user) => {
     if (user) {
       userUID = user.uid;
@@ -163,16 +156,6 @@
       document.getElementById("app-screen").style.display = "none";
     }
   });
-
-  // --- SISTEMA G2 (REMANESCENTE) ---
-
-  const monthSel = document.getElementById("month"), yearSel = document.getElementById("year"), daySel = document.getElementById("daySelect"), table = document.getElementById("table"), waText = document.getElementById("waText"), groupNameInput = document.getElementById("groupNameInput"), mainTitle = document.getElementById("mainTitle");
-  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-
-  months.forEach((m,i)=> monthSel.add(new Option(m,i)));
-  monthSel.value = new Date().getMonth();
-  for(let y=2024; y<=2026; y++) yearSel.add(new Option(y,y));
-  yearSel.value = new Date().getFullYear();
 
   async function attachListeners(){
     const y = yearSel.value, m = Number(monthSel.value), mKey = `${y}-${String(m+1).padStart(2,"0")}`;
@@ -244,6 +227,55 @@
   };
 
   monthSel.onchange = yearSel.onchange = attachListeners;
+
+  // --- PDF CORRIGIDO ---
+  document.getElementById("btnPdf").onclick = () => {
+    const { jsPDF } = window.jspdf;
+    const docPdf = new jsPDF('l', 'mm', 'a4');
+    const y = Number(yearSel.value), m = Number(monthSel.value), days = new Date(y, m+1, 0).getDate();
+    const gName = groupConfig.name || "Lista de Presenca";
+    
+    docPdf.text(`${gName}: ${months[m]}/${y}`, 14, 15);
+    
+    let head1 = ['#', 'Nome'], head2 = ['', ''];
+    for(let d=1; d<=days; d++){
+      const isSun = new Date(y, m, d).getDay() === 0;
+      if(isSun){ head1.push(d, ''); head2.push('E', 'C'); } else { head1.push(d); head2.push(''); }
+    }
+    
+    const rows = people.map((p, i) => {
+      let r = [i + 1, p.name];
+      for(let d=1; d<=days; d++) {
+        const isSun = new Date(y, m, d).getDay() === 0;
+        if(isSun) { r.push(marks[`${p.id}-${d}-E`]?"X":"", marks[`${p.id}-${d}-C`]?"X":""); }
+        else { r.push(marks[`${p.id}-${d}-C`]?"X":""); }
+      }
+      return r;
+    });
+    
+    docPdf.autoTable({ head: [head1, head2], body: rows, startY: 20, styles: { fontSize: 6 }, theme: 'grid' });
+    docPdf.save(`${gName}.pdf`);
+  };
+
+  // --- BACKUP E RESTORE ---
+  document.getElementById("btnBackup").onclick = () => {
+    const b = new Blob([JSON.stringify({people, marks, config: groupConfig})], {type: "application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "backup_icm.json"; a.click();
+  };
+
+  document.getElementById("btnRestore").onclick = () => document.getElementById("fileRestore").click();
+  document.getElementById("fileRestore").onchange = (e) => {
+    const r = new FileReader(); r.onload = async (ev) => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if(d.people) await setDoc(peopleDocRef, { people: d.people }, { merge: true });
+        if(d.marks) await setDoc(currentDocRef, { marks: d.marks }, { merge: true });
+        if(d.config) await setDoc(configDocRef, d.config, { merge: true });
+        alert("Restaurado!");
+      } catch(err) { alert("Erro ao restaurar"); }
+    }; 
+    r.readAsText(e.target.files[0]);
+  };
 
   document.getElementById("btnGenerate").onclick = () => {
     const d = daySel.value;
